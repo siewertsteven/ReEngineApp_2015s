@@ -5,6 +5,7 @@ Date: 2016/02
 #ifndef __MYPRIMITIVE_H_
 #define __MYPRIMITIVE_H_
 
+
 #include "MyMesh.h"
 
 class MyPrimitive : public MyMesh
@@ -12,6 +13,7 @@ class MyPrimitive : public MyMesh
 	typedef MyMesh super;
 
 public:
+    double pi = 3.1415926535897;
 	/*
 	MyPrimitive
 	USAGE: Constructor

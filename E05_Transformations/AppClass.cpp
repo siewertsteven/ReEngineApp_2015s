@@ -1,7 +1,7 @@
 #include "AppClass.h"
 void AppClass::InitWindow(String a_sWindowName)
 {
-	super::InitWindow("Bobadilla, Alberto - 3D Transformations");
+	super::InitWindow("Siewert, Steven - 3D Transformations");
 	m_v4ClearColor = vector4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
@@ -19,7 +19,7 @@ void AppClass::InitVariables(void)
 
 
 	//Initializing the primitives
-	m_pCube->GenerateCube(.05f, RERED);
+	m_pCube->GenerateCube(.5f, RERED);
 	m_pSphere->GenerateSphere(0.5f, 5, REWHITE);
 	m_pCone->GenerateCone(0.5f, 0.5f, 10, REGREEN);
 	m_pCylinder->GenerateCylinder(0.5f, 0.5f, 10, REBLUE);
@@ -36,13 +36,14 @@ void AppClass::Update(void)
 	m_m4Cube = glm::translate(IDENTITY_M4, vector3(2.0f, 0.0f, 0.0f));
 	m_m4Cylinder = glm::translate(IDENTITY_M4, vector3(-2.0f, 0.0f, 0.0f));
 	m_m4Tube = glm::translate(IDENTITY_M4, vector3(0.0f, -2.0f, 0.0f));
-
+	m_m4Cone = glm::translate(IDENTITY_M4, vector3(0.0f, 2.0f, 0.0f));
 	//This matrices will scale them to the right size
 	m_m4Sphere = glm::scale(m_m4Sphere, vector3(2.0f, 2.0f, 2.0f));
 	m_m4Torus = glm::scale(m_m4Torus, vector3(2.0f, 2.0f, 2.0f));
 	m_m4Cube = glm::scale(m_m4Cube, vector3(2.0f, 2.0f, 2.0f));
 	m_m4Cylinder = glm::scale(m_m4Cylinder, vector3(2.0f, 2.0f, 2.0f));
-	m_m4Torus = glm::scale(m_m4Torus, vector3(2.0f, 2.0f, 2.0f));
+	m_m4Tube = glm::scale(m_m4Tube, vector3(2.0f, 2.0f, 2.0f));
+	m_m4Cone = glm::scale(m_m4Cone, vector3(2.0f, 2.0f, 2.0f));
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
 	//Print info on the screen
@@ -62,9 +63,9 @@ void AppClass::Display(void)
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
 
 	//Renders the meshes using the specified position given by the matrix and in the specified color
+	m_pCube->Render(m4Projection, m4View, m_m4Cube);
 	m_pSphere->Render(m4Projection, m4View, m_m4Sphere);
 	m_pTorus->Render(m4Projection, m4View, m_m4Torus);
-	m_pCube->Render(m4Projection, m4View, m_m4Cube);
 	m_pCylinder->Render(m4Projection, m4View, m_m4Cylinder);
 	m_pCone->Render(m4Projection, m4View, m_m4Cone);
 	m_pTube->Render(m4Projection, m4View, m_m4Tube);
