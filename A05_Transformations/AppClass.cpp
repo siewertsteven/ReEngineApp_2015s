@@ -45,15 +45,15 @@ void AppClass::Update(void)
 
 	//This matrices will hold the relative transformation of the Moon and the Earth
 	matrix4 distanceEarth = glm::translate(11.0f, 0.0f, 0.0f);
-	matrix4 distanceMoon = glm::translate(0.0f, -2.0f, 0.0f);
+	matrix4 distanceMoon = glm::translate(2.0f, 0.0f, 0.0f);
 #pragma endregion
 
 #pragma region YOUR CODE GOES HERE
 	//Calculate the position of the Earth
-	m_m4Earth = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f)) * distanceEarth * glm::rotate(IDENTITY_M4, m_fEarthTimer*360, vector3(0.0f, 0.0f, 1.0f));
+	m_m4Earth = glm::rotate(IDENTITY_M4, m_fEarthTimer, vector3(0.0f, 1.0f, 0.0f));
 
 	//Calculate the position of the Moon
-	m_m4Moon = glm::rotate(m_m4Earth, m_fMoonTimer, vector3(0.0f, 1.0f, 0.0f)) * distanceMoon * glm::rotate(IDENTITY_M4, -m_fEarthTimer * 360, vector3(0.0f, 1.0f, 0.0f));
+	m_m4Moon = glm::rotate(IDENTITY_M4, m_fMoonTimer, vector3(0.0f, 1.0f, 0.0f));
 #pragma endregion
 
 #pragma region Print info
@@ -71,7 +71,7 @@ void AppClass::Update(void)
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
 #pragma endregion
 
-	m_fMoonTimer+=1;//Increase Moon timer
+	m_fMoonTimer++;//Increase Moon timer
 	m_fEarthTimer = m_fMoonTimer / 28.0f; //divide by the moon's day
 }
 
