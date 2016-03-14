@@ -14,6 +14,16 @@ class AppClass : public ReEngAppClass
 {
 	float fDuration = 1.0f; //Time Duration of the stops
 public:
+	vector3 end;
+	vector3 start;
+	//array of points that the object will travel to
+	vector3* lerpPoints = nullptr;
+	//all the spheres that represent the paints
+	PrimitiveClass* m_pSphere = nullptr;
+	//all the locations of the spheres
+	matrix4* m_pMatrix = nullptr;
+	int curPoint = 0;
+
 	typedef ReEngAppClass super;
 	/*
 	USAGE: Constructor

@@ -8,6 +8,38 @@ void AppClass::InitVariables(void)
 {
 	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 0.0f, 15.0f), ZERO_V3, REAXISY);
 
+	//starting points
+	curPoint = 1;
+	start = vector3(-4.0f, -2.0f, 5.0f);
+	end = vector3(1.0f, -2.0f, 5.0f);
+	
+	//populating lerpPoints
+	lerpPoints = new vector3[11];
+	
+	lerpPoints[0] = vector3(-4.0f, -2.0f, 5.0f);
+	lerpPoints[1] = vector3(1.0f, -2.0f, 5.0f);
+	lerpPoints[2] = vector3(-3.0f, -1.0f, 3.0f);
+	lerpPoints[3] = vector3(2.0f, -1.0f, 3.0f);
+	lerpPoints[4] = vector3(-2.0f, -0.0f, 0.0f);
+	lerpPoints[5] = vector3(3.0f, 0.0f, 0.0f);;
+	lerpPoints[6] = vector3(-1.0f, 1.0f, -3.0f);
+	lerpPoints[7] = vector3(4.0f, 1.0f, -3.0f);
+	lerpPoints[8] = vector3(0.0f, 2.0f, -5.0f);
+	lerpPoints[9] = vector3(5.0f, 2.0f, -5.0f);
+	lerpPoints[10] = vector3(1.0f, 3.0f, -5.0f);
+
+	//generating spheres an their transformations
+	m_pSphere = new PrimitiveClass[11];
+	m_pMatrix = new matrix4[11];
+	for (int i = 0; i < 11; i++)
+	{
+		m_pSphere[i].GenerateSphere(.1f, 5, RERED);
+
+		m_pMatrix[i] = glm::translate(lerpPoints[i]);
+	}
+
+
+
 	// Color of the screen
 	m_v4ClearColor = vector4(REBLACK, 1); // Set the clear color to black
 
@@ -18,6 +50,8 @@ void AppClass::InitVariables(void)
 
 void AppClass::Update(void)
 {
+
+
 #pragma region Does not change anything here
 	//Update the system's time
 	m_pSystem->UpdateTime();
@@ -36,7 +70,25 @@ void AppClass::Update(void)
 #pragma endregion
 
 #pragma region Your Code goes here
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "WallEye");
+	//get the run time and map that to a percentage
+	float fPercentage = MapValue(fRunTime, 0.0, static_cast<double>(fDuration), 0.0, 1.0);
+
+	//interpolate between the start and end point using the percentage
+	vector3 v3Interpolation = glm::lerp(start, end, static_cast<float>(fPercentage));
+	//apply that vector to a translations
+	matrix4 m4_transform = glm::translate(v3Interpolation);
+
+	//change the start and end points when fpercentage is equal to 1 and reset the timer
+	if (fPercentage >= 1 && curPoint < 10)
+	{
+		curPoint++;
+		start = end;
+		end = lerpPoints[curPoint];
+		fRunTime = 0;
+	}
+
+
+	m_pMeshMngr->SetModelMatrix(m4_transform, "WallEye");
 #pragma endregion
 
 #pragma region Does not need changes but feel free to change anything here
@@ -75,6 +127,11 @@ void AppClass::Display(void)
 		break;
 	}
 	
+	//rendering spheres
+	for (int i = 0; i < 11; i++)
+	{
+		m_pSphere[i].Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_pMatrix[i]);
+	}
 	m_pMeshMngr->Render(); //renders the render list
 
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
@@ -82,5 +139,8 @@ void AppClass::Display(void)
 
 void AppClass::Release(void)
 {
+	delete[] m_pSphere;
+	delete[] m_pMatrix;
+	delete[] lerpPoints;
 	super::Release(); //release the memory of the inherited fields
 }

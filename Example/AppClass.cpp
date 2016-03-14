@@ -16,11 +16,32 @@ void AppClass::InitVariables(void)
 	//Set the camera at a position other than the default
 	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 2.5f, 12.0f), vector3(0.0f, 2.5f, 11.0f), REAXISY);
 
+	m_pCameraMngr->SetPosition(vector3(0.0f, 0.0f, 35.0f));
 
+	//getting random amount for the number of objects
+	srand(time(NULL));
+	m_nObjects = rand() % 23 + 5;
+
+
+	vector3 v3Start = vector3(-m_nObjects, 0.0f, 0.0f);
+	vector3 v3End = vector3(m_nObjects, 0.0f, 0.0f);
+
+	m_pSphere = new PrimitiveClass[m_nObjects];
+
+	m_pMatrix = new matrix4[m_nObjects];
+	for (int i = 0; i < m_nObjects; i++)
+	{
+		//mapping the current object between 0 and 1
+		float fPercent = MapValue(static_cast<float>(i), 0.0f, static_cast<float>(m_nObjects), 0.0f, 1.0f);
+		m_pSphere[i].GenerateSphere(1.0f, 5, vector3(fPercent, 0.0f, 0.0f));
+		
+		//getting the translation based on the linear vector
+		vector3 v3Interpolation = glm::lerp(v3Start, v3End, static_cast<float>(fPercent));
+		m_pMatrix[i] = glm::translate(v3Interpolation);
+	}
 
 	//Load a model onto the Mesh manager
 	m_pMeshMngr->LoadModel("Minecraft\\Steve.obj", "Steve");
-	m_pMeshMngr->LoadModel("Miamimon.obj", "renamon");
 }
 
 void AppClass::Update(void)
@@ -39,6 +60,8 @@ void AppClass::Update(void)
 	ArcBall();
 
 	//Lets us know how much time has passed since the last call
+	/*
+	in class example
 	double fTimeSpan = m_pSystem->LapClock(); //Delta time (between frame calls)
 
 											  //cumulative time
@@ -57,6 +80,7 @@ void AppClass::Update(void)
 
 	
 	matrix4 m4Temp = glm::translate(v3Interpolation);
+	*/
 	//m4Temp = m4Temp * glm::rotate(IDENTITY_M4, 45.0f, vector3(8.0f, 6.0f, 2342.0f));
 
 	//m4Temp = m4Temp * glm::inverse(m4Temp);
@@ -75,11 +99,10 @@ void AppClass::Update(void)
 	
 
 
-	m_pMeshMngr->SetModelMatrix(m4Temp, "Steve");
-	m_pMeshMngr->SetModelMatrix(m4Temp, "renamon");
+	//m_pMeshMngr->SetModelMatrix(m4Temp, "Steve");
 	
 	//Adds all loaded instance to the render list
-	m_pMeshMngr->AddInstanceToRenderList("ALL");
+	//m_pMeshMngr->AddInstanceToRenderList("ALL");
 
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
@@ -116,6 +139,12 @@ void AppClass::Display(void)
 		m_pMeshMngr->AddGridToQueue(1.0f, REAXIS::XY, REBLUE * 0.75f); //renders the XY grid with a 100% scale
 		break;
 	}
+	//rendering spheres
+	for (int i = 0; i < m_nObjects; i++)
+	{
+		m_pSphere[i].Render(m_pCameraMngr->GetProjectionMatrix(), m_pCameraMngr->GetViewMatrix(), m_pMatrix[i]);
+	}
+	
 	
 	m_pMeshMngr->Render(); //renders the render list
 

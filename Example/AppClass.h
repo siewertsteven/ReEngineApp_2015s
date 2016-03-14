@@ -14,6 +14,10 @@ class AppClass : public ReEngAppClass
 {
 	vector3 m_v3Position = vector3(0.0f);
 public:
+	int m_nObjects;
+	PrimitiveClass* m_pSphere = nullptr;
+	matrix4* m_pMatrix = nullptr;
+
 	typedef ReEngAppClass super;
 
 	/*
